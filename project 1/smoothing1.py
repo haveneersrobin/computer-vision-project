@@ -67,7 +67,6 @@ def gaussian_smooth1(img, sigma):
     Returns the smoothed image.
     '''
     result = np.zeros_like(img)
-    print result
     #get the filtercv2.waitKey(0)
     filter = gaussian_filter(sigma)
     
@@ -75,9 +74,11 @@ def gaussian_smooth1(img, sigma):
     for c in range(3):
         #smooth the 2D image img[:,:,c]
         #tip: make use of numpy.convolve
-        result[c] = np.convolve(img[:,:,c],filter)
-        
-    
+        shape = img[:,:,c].shape
+        flattened_channel = img[:,:,c].flatten()
+        convolved_channel = np.convolve(flattened_channel, filter,'same')
+        convolved_channel.shape = shape
+        result[:,:,c] = convolved_channel
     return result
 
 
@@ -95,10 +96,10 @@ if __name__ == '__main__':
     
     #show the image, and wait for a key to be pressed
     cv2.imshow('img',img)
-    cv2.waitKey(0)
+    cv2.waitKey(10)
     
     #smooth the image
-    smoothed_img = gaussian_smooth1(img, 2)
+    smoothed_img = gaussian_smooth1(img, 6)
     
     #show the smoothed image, and wait for a key to be pressed
     cv2.imshow('smoothed_img',smoothed_img)
