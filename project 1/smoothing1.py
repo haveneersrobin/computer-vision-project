@@ -6,6 +6,7 @@ Gaussian smoothing with Python.
 import cv2
 import numpy as np
 import math
+import os
 
 def gaussian_filter(sigma, filter_length=None):
     '''
@@ -88,15 +89,17 @@ if __name__ == '__main__':
     #test the gaussian filter
     #test_gaussian_filter()
 
+    dir = os.path.dirname(__file__)
+
     #read an image
-    img = cv2.imread('/Users/Robin/Developer/computer-vision-project/project 1/image.jpg')
+    img = cv2.imread(os.path.join(dir,'image.jpg'))
     
     #print the dimension of the image
     print img.shape
     
     #show the image, and wait for a key to be pressed
     cv2.imshow('img',img)
-    cv2.waitKey(10)
+    cv2.waitKey(0)
     
     #smooth the image
     smoothed_img = gaussian_smooth1(img, 6)
