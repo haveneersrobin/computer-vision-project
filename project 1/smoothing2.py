@@ -5,6 +5,7 @@ Gaussian smoothing with Python and OpenCV.
 import cv2
 import math
 import numpy as np
+import os
    
 def gaussian_smooth2(img, sigma): 
     '''
@@ -12,7 +13,7 @@ def gaussian_smooth2(img, sigma):
     Returns the smoothed image.
     '''
     result = np.zeros_like(img)
-    
+
     #determine the length of the filter
     filter_length= math.ceil(sigma*5) 
     #make the length odd
@@ -20,7 +21,7 @@ def gaussian_smooth2(img, sigma):
             
     #Go ahead! 
     #Tip: smoothing=blurring, a filter=a kernel
-    print('TODO')
+    result = cv2.GaussianBlur(img, (filter_length, filter_length), sigma)
     
     return result
 
@@ -28,8 +29,10 @@ def gaussian_smooth2(img, sigma):
 
 #this part of the code is only executed if the file is run stand-alone
 if __name__ == '__main__':
+    dir = os.path.dirname(__file__)
+
     #read an image
-    img = cv2.imread('image.jpg')
+    img = cv2.imread(os.path.join(dir,'image.jpg'))
     
     #show the image, and wait for a key to be pressed
     cv2.imshow('img',img)
