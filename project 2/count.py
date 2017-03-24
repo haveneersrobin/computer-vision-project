@@ -4,10 +4,11 @@ Cell counting.
 '''
 
 import cv2
-import cv2.cv
+#import cv2.cv
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+import os
 
 def detect(img):
     '''
@@ -18,16 +19,21 @@ def detect(img):
     img_g[:,:] = img[:,:,0]
 
     #1. Do canny (determine the right parameters) on the gray scale image
-    edges = None #TODO!
+    edges = cv2.Canny(img, 115, 100)
 
     #Show the results of canny
     canny_result = np.copy(img_g)
     canny_result[edges.astype(np.bool)]=0
-    cv2.imshow('img',canny_result)
+    cv2.imshow('img_canny',canny_result)
     cv2.waitKey(0)
 
     #2. Do hough transform on the gray scale image
-    circles = None #TODO!
+    circles = cv2.HoughCircles(img_g, method=cv2.cv.CV_HOUGH_GRADIENT, dp=1, minDist=1,
+              param1=30,
+              param2=5,
+              minRadius=5,
+              maxRadius=100)
+
     circles = circles[0,:,:]
 
     #Show hough transform result
@@ -92,8 +98,9 @@ def showCircles(img, circles, text=None):
 
 
 if __name__ == '__main__':
+    dir = os.path.dirname(__file__)
     #read an image
-    img = cv2.imread('normal.jpg')
+    img = cv2.imread(os.path.join(dir,'normal.jpg'))
 
     #print the dimension of the image
     print img.shape
