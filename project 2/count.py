@@ -4,7 +4,7 @@ Cell counting.
 '''
 
 import cv2
-#import cv2.cv
+import cv2.cv as cv
 import numpy as np
 import matplotlib.pyplot as plt
 import math
@@ -28,11 +28,11 @@ def detect(img):
     cv2.waitKey(0)
 
     #2. Do hough transform on the gray scale image
-    circles = cv2.HoughCircles(img_g, method=cv2.cv.CV_HOUGH_GRADIENT, dp=1, minDist=1,
-              param1=30,
-              param2=5,
-              minRadius=5,
-              maxRadius=100)
+    circles = cv2.HoughCircles(canny_result, method=cv.CV_HOUGH_GRADIENT, dp=1, minDist=1)
+              #param1=30,
+              #param2=5,
+              #minRadius=5,
+              #maxRadius=100)
 
     circles = circles[0,:,:]
 
