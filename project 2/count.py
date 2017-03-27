@@ -17,9 +17,8 @@ def detect(img):
     #create a gray scale version of the image, with as type an unsigned 8bit integer
     img_g = np.zeros( (img.shape[0], img.shape[1]), dtype=np.uint8 )
     img_g[:,:] = img[:,:,0]
-
     #1. Do canny (determine the right parameters) on the gray scale image
-    edges = cv2.Canny(img, 115, 100)
+    edges = cv2.Canny(img_g, 55, 60)
 
     #Show the results of canny
     canny_result = np.copy(img_g)
@@ -28,11 +27,11 @@ def detect(img):
     cv2.waitKey(0)
 
     #2. Do hough transform on the gray scale image
-    circles = cv2.HoughCircles(canny_result, method=cv.CV_HOUGH_GRADIENT, dp=1, minDist=1)
-              #param1=30,
-              #param2=5,
-              #minRadius=5,
-              #maxRadius=100)
+    circles = cv2.HoughCircles(canny_result, method=cv.CV_HOUGH_GRADIENT, dp=1, minDist=30,
+              param1=60,
+              param2=20,
+              minRadius=20,
+              maxRadius=50)
 
     circles = circles[0,:,:]
 
