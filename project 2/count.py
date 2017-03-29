@@ -42,8 +42,9 @@ def detect(img):
     #3.a Get a feature vector (the average color) for each circle
     nbCircles = circles.shape[0]
     features = np.zeros( (nbCircles,3), dtype=np.int)
-    for i in range(nbCircles):
-        features[i,:] = getAverageColorInCircle( None , int(circles[i,0]), int(circles[i,1]), int(circles[i,2]) ) #TODO!
+    #for i in range(nbCircles):
+    for i in range(0,1):
+        features[i,:] = getAverageColorInCircle( img , int(circles[i,0]), int(circles[i,1]), int(circles[i,2]) ) #TODO!
 
     #3.b Show the image with the features (just to provide some help with selecting the parameters)
     showCircles(img, circles, [ str(features[i,:]) for i in range(nbCircles)] )
@@ -67,7 +68,16 @@ def getAverageColorInCircle(img, cx, cy, radius):
     maxy,maxx,channels = img.shape
     nbVoxels = 0
     C = np.zeros( (3) )
-    #TODO!
+
+    overlay = np.zeros(img.shape, np.uint8)
+    cv2.circle(overlay, (cx, cy), radius, 255, -1)
+    where = np.where(overlay == 255)
+    
+
+
+
+    print where
+
     return C
 
 
