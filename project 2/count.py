@@ -19,13 +19,13 @@ def detect(img):
     img_g[:,:] = img[:,:,0]
     #1. Do canny (determine the right parameters) on the gray scale image
     edges = cv2.Canny(img_g, 25, 93, 3)
-    cv2.imshow("edge",edges)
-    cv2.waitKey(0)
+    #cv2.imshow("edge",edges)
+    #cv2.waitKey(0)
     #Show the results of canny
     canny_result = np.copy(img_g)
     canny_result[edges.astype(np.bool)]=0
-    cv2.imshow('img_canny',canny_result)
-    cv2.waitKey(0)
+    #cv2.imshow('img_canny',canny_result)
+    #cv2.waitKey(0)
 
     #2. Do hough transform on the gray scale image
     circles = cv2.HoughCircles(canny_result, method=cv.CV_HOUGH_GRADIENT, dp=1, minDist=40,
@@ -45,20 +45,10 @@ def detect(img):
 
     img_hls = np.zeros(img.shape)
     img_hls = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    cv2.imshow('img_hls',img_hls)
-    cv2.waitKey(0)
-
-    for i in range(nbCircles):
-        features[i,:] = getAverageColorInCircle( img_hls , int(circles[i,0]), int(circles[i,1]), int(circles[i,2]) )
-
-    #3.b Show the image with the features (just to provide some help with selecting the parameters)
-    showCircles(img, circles, [ str(features[i,:]) for i in range(nbCircles)] )
-
-    #3.c Remove circles based on the features
-    selectedCircles = np.zeros( (nbCircles), np.bool)
 
     hue, saturation, value = np.zeros(nbCircles),np.zeros(nbCircles),np.zeros(nbCircles)
     for i in range(nbCircles):
+        features[i,:] = getAverageColorInCircle( img_hls , int(circles[i,0]), int(circles[i,1]), int(circles[i,2]) )
         hue[i] = features[i,0]
         saturation[i] = features[i,1]
         value[i] = features[i, 2]
@@ -67,10 +57,16 @@ def detect(img):
     sat_median = np.median(saturation)
     val_median = np.median(value)
 
+    #3.b Show the image with the features (just to provide some help with selecting the parameters)
+    showCircles(img, circles, [ str(features[i,:]) for i in range(nbCircles)] )
+
+    #3.c Remove circles based on the features
+    selectedCircles = np.zeros( (nbCircles), np.bool)
+
     median_array = np.array([hue_median, sat_median, val_median])
 
     for i in range(nbCircles):
-        if (np.all(features[i] >= 0.75*median_array)) and (np.all(features[i] <= 1.25*median_array)):
+        if (np.all(features[i] >= 0.74*median_array)) and (np.all(features[i] <= 1.40*median_array)):
             selectedCircles[i]=1
     circles = circles[selectedCircles]
 
@@ -140,8 +136,8 @@ if __name__ == '__main__':
     print img.shape
 
     #show the image
-    cv2.imshow('img',img)
-    cv2.waitKey(0)
+    #cv2.imshow('img',img)
+    #cv2.waitKey(0)
 
     #do detection
     circles = detect(img)
