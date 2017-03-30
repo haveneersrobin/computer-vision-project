@@ -42,17 +42,35 @@ def detect(img):
     #3.a Get a feature vector (the average color) for each circle
     nbCircles = circles.shape[0]
     features = np.zeros( (nbCircles,3), dtype=np.int)
-    #for i in range(nbCircles):
-    for i in range(0,1):
-        features[i,:] = getAverageColorInCircle( img , int(circles[i,0]), int(circles[i,1]), int(circles[i,2]) ) #TODO!
+
+    img_hls = np.zeros(img.shape)
+    img_hls = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    cv2.imshow('img_hls',img_hls)
+    cv2.waitKey(0)
+
+    for i in range(nbCircles):
+        features[i,:] = getAverageColorInCircle( img_hls , int(circles[i,0]), int(circles[i,1]), int(circles[i,2]) )
 
     #3.b Show the image with the features (just to provide some help with selecting the parameters)
     showCircles(img, circles, [ str(features[i,:]) for i in range(nbCircles)] )
 
     #3.c Remove circles based on the features
     selectedCircles = np.zeros( (nbCircles), np.bool)
+
+    hue, saturation, value = np.zeros(nbCircles),np.zeros(nbCircles),np.zeros(nbCircles)
     for i in range(nbCircles):
-        if True:    #TODO
+        hue[i] = features[i,0]
+        saturation[i] = features[i,1]
+        value[i] = features[i, 2]
+
+    hue_median = np.median(hue)
+    sat_median = np.median(saturation)
+    val_median = np.median(value)
+
+    median_array = np.array([hue_median, sat_median, val_median])
+
+    for i in range(nbCircles):
+        if (np.all(features[i] >= 0.75*median_array)) and (np.all(features[i] <= 1.25*median_array)):
             selectedCircles[i]=1
     circles = circles[selectedCircles]
 
@@ -69,14 +87,20 @@ def getAverageColorInCircle(img, cx, cy, radius):
     nbVoxels = 0
     C = np.zeros( (3) )
 
-    overlay = np.zeros(img.shape, np.uint8)
+    overlay = np.zeros((maxy,maxx), np.uint8)
     cv2.circle(overlay, (cx, cy), radius, 255, -1)
+    # Where is a tuple containing two arrays, where the first array are all y coordinates
+    # inside the circle and the second array the respective x coordinates. This never goes out of bounds.
     where = np.where(overlay == 255)
-    
 
+    for i in range(channels):
+        for j in range(where[0].size):
+            C[i] += img[where[0][j]][where[1][j]][i]
+            nbVoxels += 1
 
-
-    print where
+    nbVoxels = nbVoxels/3
+    for i in range(channels):
+        C[i] /= nbVoxels
 
     return C
 
