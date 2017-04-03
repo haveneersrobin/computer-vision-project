@@ -1,5 +1,8 @@
 '''
 Cell counting.
+
+Robin Haveneers
+r0450702
 '''
 
 import cv2
