@@ -5,6 +5,8 @@ import errno
 import numpy as np
 import fnmatch
 
+import sys
+
 
 def create_database(directory, show = True):
     '''
@@ -17,7 +19,7 @@ def create_database(directory, show = True):
     '''
     #load a pre-trained classifier
     cascade = cv2.CascadeClassifier("data/haarcascade_frontalface_alt.xml")
-    
+
     #loop through all files
     for filename in fnmatch.filter(os.listdir(directory),'*.jpg'):
         file_in = directory+"/"+filename
@@ -104,6 +106,20 @@ def pca(X, nb_components=0):
     if (nb_components <= 0) or (nb_components>n):
         nb_components = n
 
+    mean = np.reshape([x / n for x in np.sum(X, axis=0)],(100,100)).astype(np.uint8)
+    cv2.imshow('mean', mean)
+    cv2.waitKey(0)
+    scatter = np.zeros((100,100), dtype=np.uint8)
+    for i in range (0,n):
+        reshape_xi = np.reshape(X[i], (100,100)).astype(np.uint8)
+        scatter += (reshape_xi - mean)*np.transpose(reshape_xi-mean)
+    print scatter
+
+    sys.exit()
+
+    #for x in range(0, X.size):
+
+
     #TODO
 
     return
@@ -117,7 +133,7 @@ def normalize(img):
 if __name__ == '__main__':
     #create database of normalized images
     for directory in ["data/arnold", "data/barack"]:
-        create_database(directory, show = False)
+        create_database(directory, show = True)
 
     show = True
 
@@ -131,7 +147,6 @@ if __name__ == '__main__':
     Ctest = ["arnold"]*(Xa.shape[0]-nbTrain) + ["barack"]*(Xb.shape[0]-nbTrain)
     Xa = Xa[0:nbTrain,:]
     Xb = Xb[0:nbTrain,:]
-
     #do pca
     [eigenvaluesa, eigenvectorsa, mua] = pca(Xa,nb_components=6)
     [eigenvaluesb, eigenvectorsb, mub] = pca(Xb,nb_components=6)
