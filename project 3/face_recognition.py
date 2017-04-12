@@ -105,22 +105,27 @@ def pca(X, nb_components=0):
     if (nb_components <= 0) or (nb_components>n):
         nb_components = n
 
-    mean = np.mean(X, axis=0)
-    diff_X = X - mean
-
-    scatter = np.zeros((np.sqrt(d), np.sqrt(d)))
-    for i in range (0,n):
-        reshape_i = np.reshape(diff_X[i], (np.sqrt(d),np.sqrt(d)))
-        reshape_i.shape
-        scatter += np.transpose(reshape_i)*(reshape_i)
-    print "scat"
-    print scatter/n
-    print "C"
-    C = np.cov(X, rowvar = False, bias=True)
+    # mean = np.mean(X, axis=0)
+    # diff_X = X - mean
+    #
+    # scatter = np.zeros((np.sqrt(d), np.sqrt(d)))
+    # for i in range (0,n):
+    #     reshape_i = np.reshape(diff_X[i], (np.sqrt(d),np.sqrt(d)))
+    #     reshape_i.shape
+    #     scatter += np.transpose(reshape_i)*(reshape_i)
+    # print "scat"
+    # print scatter/n
+    # print "C"
+    # S = (np.dot(diff_X, diff_X.T) / float(n))
+    # print S
+    C =  np.cov(X, rowvar=False)
+    print "CCCCCC"
     print C
+    eig_val, eig_vec = np.linalg.eigh(C)
 
-    eigval,evec = np.linalg.eigh(C)
-    print evec * eigval * evec.T
+    print C.dot(eig_vec[0])
+    print eig_val[0]*eig_vec[0]
+
     #TODO
 
     sys.exit()
