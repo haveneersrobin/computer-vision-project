@@ -7,7 +7,6 @@ import fnmatch
 
 import sys
 
-
 def create_database(directory, show = True):
     '''
     Process all images in the given directory.
@@ -106,21 +105,25 @@ def pca(X, nb_components=0):
     if (nb_components <= 0) or (nb_components>n):
         nb_components = n
 
-    mean = np.reshape([x / n for x in np.sum(X, axis=0)],(100,100)).astype(np.uint8)
-    cv2.imshow('mean', mean)
-    cv2.waitKey(0)
-    scatter = np.zeros((100,100), dtype=np.uint8)
+    mean = np.mean(X, axis=0)
+    diff_X = X - mean
+
+    scatter = np.zeros((np.sqrt(d), np.sqrt(d)))
     for i in range (0,n):
-        reshape_xi = np.reshape(X[i], (100,100)).astype(np.uint8)
-        scatter += (reshape_xi - mean)*np.transpose(reshape_xi-mean)
-    print scatter
+        reshape_i = np.reshape(diff_X[i], (np.sqrt(d),np.sqrt(d)))
+        reshape_i.shape
+        scatter += np.transpose(reshape_i)*(reshape_i)
+    print "scat"
+    print scatter/n
+    print "C"
+    C = np.cov(X, rowvar = False, bias=True)
+    print C
+
+    eigval,evec = np.linalg.eigh(C)
+    print evec * eigval * evec.T
+    #TODO
 
     sys.exit()
-
-    #for x in range(0, X.size):
-
-
-    #TODO
 
     return
 
@@ -133,7 +136,7 @@ def normalize(img):
 if __name__ == '__main__':
     #create database of normalized images
     for directory in ["data/arnold", "data/barack"]:
-        create_database(directory, show = True)
+        create_database(directory, show = False)
 
     show = True
 
