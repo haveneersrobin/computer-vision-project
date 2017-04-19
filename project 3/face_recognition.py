@@ -85,13 +85,13 @@ def project(W, X, mu):
     Project X on the space spanned by the vectors in W.
     mu is the average image.
     '''
-    return #TODO
+    return np.dot(W.T, (X-mu))
 
 def reconstruct(W, Y, mu):
     '''
     Reconstruct an image based on its PCA-coefficients Y, the eigenvectors W and the average mu.
     '''
-    return #TODO
+    return np.dot(W, Y) + mu
 
 def pca(X, nb_components=0):
     '''
@@ -105,32 +105,24 @@ def pca(X, nb_components=0):
     if (nb_components <= 0) or (nb_components>n):
         nb_components = n
 
-    # mean = np.mean(X, axis=0)
-    # diff_X = X - mean
-    #
-    # scatter = np.zeros((np.sqrt(d), np.sqrt(d)))
-    # for i in range (0,n):
-    #     reshape_i = np.reshape(diff_X[i], (np.sqrt(d),np.sqrt(d)))
-    #     reshape_i.shape
-    #     scatter += np.transpose(reshape_i)*(reshape_i)
-    # print "scat"
-    # print scatter/n
-    # print "C"
-    # S = (np.dot(diff_X, diff_X.T) / float(n))
-    # print S
-    C =  np.cov(X, rowvar=False)
-    print "CCCCCC"
-    print C
-    eig_val, eig_vec = np.linalg.eigh(C)
+    mean = np.mean(X, axis=0)
+    X -= mean
+    cov = np.dot(X, np.transpose(X))
+    eig_val, eig_vec = np.linalg.eigh(cov)
 
-    print C.dot(eig_vec[0])
-    print eig_val[0]*eig_vec[0]
+    sort_indices = np.argsort(eig_val)[::-1]
+    eig_vec = eig_vec[:,sort_indices][:,0:nb_components]
+    eig_val = eig_val[sort_indices][0:nb_components]
 
-    #TODO
+    eig_vec = np.dot(np.transpose(X), eig_vec)
+    for i in range(nb_components):
+        eig_vec[:,i] = vector_norm(eig_vec[:,i])
 
-    sys.exit()
+    return eig_val, eig_vec, mean
 
-    return
+def vector_norm(vec):
+    norm=np.linalg.norm(vec)
+    return vec if norm==0 else vec/norm
 
 def normalize(img):
     '''
@@ -160,7 +152,7 @@ if __name__ == '__main__':
     [eigenvaluesb, eigenvectorsb, mub] = pca(Xb,nb_components=6)
     #visualize
     cv2.imshow('img',np.hstack( (mua.reshape(100,100),
-                                 normalize(eigenvectorsa[:,0].reshape(100,100)),
+                                 normalize(eigenvectorsa[:,1].reshape(100,100)),
                                  normalize(eigenvectorsa[:,1].reshape(100,100)),
                                  normalize(eigenvectorsa[:,2].reshape(100,100)))
                                ).astype(np.uint8))
