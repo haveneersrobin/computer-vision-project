@@ -105,22 +105,32 @@ def pca(X, nb_components=0):
     if (nb_components <= 0) or (nb_components>n):
         nb_components = n
 
+    # Calculate the mean
     mean = np.mean(X, axis=0)
+    # Center the data
     X -= mean
+    # Calculate covariance matrix
     cov = np.dot(X, np.transpose(X))
+    # Calculate eigenvalues and eigenvectors
     eig_val, eig_vec = np.linalg.eigh(cov)
 
+    # Sort the values from best to worst and sort the vectors the same way.
+    # Only keep the nb_components first elements
     sort_indices = np.argsort(eig_val)[::-1]
     eig_vec = eig_vec[:,sort_indices][:,0:nb_components]
     eig_val = eig_val[sort_indices][0:nb_components]
 
+    # Trick to avoid huge calulcations
     eig_vec = np.dot(np.transpose(X), eig_vec)
+
+    # Normalize the vectors
     for i in range(nb_components):
         eig_vec[:,i] = vector_norm(eig_vec[:,i])
 
     return eig_val, eig_vec, mean
 
 def vector_norm(vec):
+    # Function to normalize vector
     norm=np.linalg.norm(vec)
     return vec if norm==0 else vec/norm
 
