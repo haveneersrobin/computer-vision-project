@@ -1,3 +1,8 @@
+# Robin Haveneers
+# r0450702
+# Master Engineering: Computer Science (Human Computer Interaction)
+# 2016-2017
+
 import cv2
 import cv2.cv as cv
 import os
